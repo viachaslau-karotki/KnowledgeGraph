@@ -34,6 +34,11 @@
         "id": "machine-learning",
         "label": "Machine Learning",
 		"image": "https://www.smartdatacollective.com/wp-content/uploads/2021/06/machine-learning-helps-life-insurance-780x506.jpg",
+		"description": "Get command of your organizational Big Data using the power of data science and analytics\nAbout This Book\nA perfect companion to boost your Big Data storing, processing, analyzing skills to help you take informed business decisions\nWork with the best tools such as Apache Hadoop, R, Python, and Spark for NoSQL platforms to perform massive online analyses\nGet expert tips on statistical inference, machine learning, mathematical modeling, and data visualization for Big Data",
+        "masters": ["Some Name", "Other Person", "OneMore Name"],
+        "padawans": ["Some Name", "Other Person", "OneMore Name", "Some Name", "Other Person", "OneMore Name", "Some Name", "Other Person", "OneMore Name"],
+        "projects": ["Some Name", "Other Person", "OneMore Name"],
+        "tags": ["Java", "Python"],
         "children": [
           {
             "id": "deep-learning",
