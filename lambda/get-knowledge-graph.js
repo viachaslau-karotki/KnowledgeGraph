@@ -7,30 +7,52 @@ const bucketName = process.env.BUCKET_NAME;
 const fileKey = process.env.FILE_KEY;
 
 exports.handler = async (event) => {
-    
+
     const params = {
-        Bucket: bucketName, 
+        Bucket: bucketName,
         Key: fileKey
     };
-    
+
     const file = await s3.getObject(params).promise();
     let data = JSON.parse(file.Body.toString());
     console.log(`file content: ${JSON.stringify(data)}`);
-    
+
     const ddbParams = {
-        TableName: tableName,
-        Select: 'ALL_ATTRIBUTES'
+        TableName: tableName
     };
-    
+
     const response = await ddb.scan(ddbParams).promise();
 
-    data[0].children.forEach(branch => {
-        const item = response.Items.find(info => info.id === branch.id)
-        if (item) {
-            branch['masters'] = [...new Set([...branch['masters'] ,...item.masters.values])];
-            branch['padawans'] = [...new Set([...branch['padawans'] ,...item.padawans.values])];
-        }
-    });
+    const items = response.Items;
 
-    return data;
+    const json = createJsonGraph(items);
+
+    console.log(`db result: ${JSON.stringify(json)}`);
+    return json;
 };
+
+const createJsonGraph = (items) => {
+    let result = [];
+    let knowledgeGraph = items.find(element => element.id === 'graph')
+    if (knowledgeGraph && knowledgeGraph.children) {
+        setChildren(knowledgeGraph,items);
+        result.push(knowledgeGraph);
+    }
+    return result;
+}
+
+const setChildren = (root,items) => {
+
+    let childrenElements = root.children.values
+        .map(element => {
+            let resultElement = items.find(el => el.id === element);
+            if (resultElement && resultElement.children) {
+                setChildren(resultElement, items);
+            } else {
+                resultElement.children = [];
+            }
+            return resultElement;
+        });
+        console.log(`childElements : ${JSON.stringify(childrenElements)}`);
+        root.children = childrenElements;
+}
